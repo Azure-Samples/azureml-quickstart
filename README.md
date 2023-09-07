@@ -36,6 +36,11 @@ The model deployment or outer loop phase consists of pre-production staging and 
 
 ![image](https://github.com/azeltov/aigbb-aml-bootcamp/assets/5873303/e0575c72-2c32-4c83-9660-82c34993027b)
 
+Pre-requisite: Create AML resources, follow this quickstart guide:
+
+https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2
+
+
 To Get Started start with Workshop [Setup New IPython Kernel](00_SetupIpythonKernel.ipynb)
 
 

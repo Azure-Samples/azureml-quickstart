@@ -1,6 +1,0 @@
-mlflow== 1.26.1
-azureml-mlflow==1.42.0
-psutil>=5.8,<5.9
-ipykernel
-matplotlib
-azure-ai-ml==1.5.0

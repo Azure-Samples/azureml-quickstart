@@ -16,14 +16,10 @@ The steps you'll take are:
 > * Deploy the newly-trained model as an endpoint
 > * Call the Azure Machine Learning endpoint for inferencing
 
-To Get Started start with Workshop [Setup New IPython Kernel](00_SetupIpythonKernel.ipynb)
 
-We will follow the 
-
-![image](https://github.com/azeltov/aigbb-aml-bootcamp/assets/5873303/e0575c72-2c32-4c83-9660-82c34993027b)
+We will follow the Enterprise Machine Learning Lifecycle Patterns for onborading  classical machine learning scenario on tabular data in AML Platform:
 
 ### Inner loop - Proof of concept / Model development
-
 
 The inner loop element consists of your iterative data science workflow that acts within a dedicated, secure Machine Learning workspace. A typical workflow is illustrated in the diagram. It proceeds from data ingestion, exploratory data analysis, experimentation, model development and evaluation, to registration of a candidate model for production. This modular element as implemented in the MLOps v2 accelerator is agnostic and adaptable to the process your data science team uses to develop models.
 
@@ -38,6 +34,9 @@ Data science team will take advantage of hyperscale compute cluster to scale the
 
 The model deployment or outer loop phase consists of pre-production staging and testing, production deployment, and monitoring of model, data, and infrastructure. CD pipelines manage the promotion of the model and related assets through production, monitoring, and potential retraining, as criteria that are appropriate to your organization and use case are satisfied.
 
+![image](https://github.com/azeltov/aigbb-aml-bootcamp/assets/5873303/e0575c72-2c32-4c83-9660-82c34993027b)
+
+To Get Started start with Workshop [Setup New IPython Kernel](00_SetupIpythonKernel.ipynb)
 
 
-https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/machine-learning-operations-v2
+

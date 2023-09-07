@@ -15,3 +15,5 @@ The steps you'll take are:
 > * View the output of your training script
 > * Deploy the newly-trained model as an endpoint
 > * Call the Azure Machine Learning endpoint for inferencing
+
+![image](https://github.com/azeltov/aigbb-aml-bootcamp/assets/5873303/e0575c72-2c32-4c83-9660-82c34993027b)

@@ -11,17 +11,17 @@ The steps you'll take are:
 > * Set up a handle to your Azure Machine Learning workspace 
 > * Create your training script
 > * Create a scalable compute resource, a compute cluster 
-> * Create and run a command job that will run the training script on the compute cluster, configured with the appropriate job environment
-> * View the output of your training script
+> * Create and start a training job using a remote compute cluster configured with the appropriate job environment
+> * View the output of your training job
 > * Deploy the newly-trained model as an endpoint
 > * Call the Azure Machine Learning endpoint for inferencing
 
 
-We will follow the Enterprise Machine Learning Lifecycle Patterns for onborading  classical machine learning scenario on tabular data in AML Platform:
+We will follow the Enterprise Machine Learning Lifecycle Patterns for onborading classical machine learning scenario on tabular data in AML Platform:
 
 ### Inner loop - Proof of concept / Model development
 
-The inner loop element consists of your iterative data science workflow that acts within a dedicated, secure Machine Learning workspace. A typical workflow is illustrated in the diagram. It proceeds from data ingestion, exploratory data analysis, experimentation, model development and evaluation, to registration of a candidate model for production. This modular element as implemented in the MLOps v2 accelerator is agnostic and adaptable to the process your data science team uses to develop models.
+The inner loop element consists of your iterative Data Science workflow executed within a dedicated, secure Machine Learning workspace. A typical workflow is illustrated in the diagram below. It proceeds from data ingestion, exploratory data analysis, experimentation, model development and evaluation, to registration of a candidate model for production. This modular element as implemented in the MLOps v2 accelerator is agnostic and adaptable to the process your data science team uses to develop models.
 
 
 ### Middle loop - Scaled model training

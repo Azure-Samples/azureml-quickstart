@@ -41,7 +41,24 @@ Pre-requisite: Create AML resources, follow this quickstart guide:
 https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2
 
 
-To Get Started start with Workshop [Setup New IPython Kernel](00_SetupIpythonKernel.ipynb)
+### AI/ML Pipeline Workshops
+
+This workshop repository is comprized of a number of example notebooks, which are organized as follows: 
+
+![image](media/ai_workflow_workshops.jpg)
+
+## Workshop Steps
+
+### Step 0: Completion Pre-requisites.
+https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2
+
+### Step 1: Setup Ipython Kernel
+Open run all cells in the Get Started start with Workshop [Setup New IPython Kernel](00_SetupIpythonKernel.ipynb) notebook. 
+
+### Step 2: Determine workflow type
+Azure Machine Learning workflow may be initiated via Cloud CI or by using Azure CLI tools in local Windows environment.  Please determine whether Cloud CI or local command line interface would best suite your needs.  
+
+### Step 2: Upon completion of the [Setup New IPython Kernel](00_SetupIpythonKernel.ipynb) guide
 
 
 

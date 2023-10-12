@@ -138,3 +138,6 @@ config.json
 *.amltmp 
 *.amltemp
 
+# Environment variables file
+.env
+

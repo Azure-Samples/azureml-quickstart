@@ -34,20 +34,21 @@ def main():
         test_size=args.test_train_ratio,
     )
 
-    # os.makedirs(args.train_data, exist_ok=True)
-    # os.makedirs(args.test_data, exist_ok=True)
+    os.makedirs(args.train_data_csv, exist_ok=True)
+    os.makedirs(args.test_data_csv, exist_ok=True)
 
-    print("??????????????????????????????????????")
+    print("???!!!", args.train_data_csv)
 
     # output paths are mounted as folder, therefore, we are adding a filename to the path
     # train_data_path = os.path.join(args.train_data, "data.csv")
     # print("train_data_path", os.path.abspath(train_data_path))
 
-    credit_train_df.to_csv(args.train_data_csv, index=False)
+
+    credit_train_df.to_csv(os.path.join(os.getcwd(), args.train_data_csv, "data.csv"), index=False)
 
     # test_data_path = os.path.join(args.test_data, "data.csv")
     # print("test_data_path", os.path.abspath(test_data_path))
-    credit_test_df.to_csv(args.test_data_csv, index=False)
+    credit_test_df.to_csv(os.path.join(os.getcwd(), args.test_data_csv, "data.csv"), index=False)
 
     # Stop Logging
     mlflow.end_run()

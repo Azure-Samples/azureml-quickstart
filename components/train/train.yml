@@ -5,9 +5,11 @@ display_name: Train Credit Defaults Model
 type: command
 inputs:
   train_data_csv: 
-    type: uri_file
+    type: uri_folder
+    mode: ro_mount
   test_data_csv: 
     type: uri_file
+    mode: ro_mount
   learning_rate:
     type: number     
   registered_model_name:

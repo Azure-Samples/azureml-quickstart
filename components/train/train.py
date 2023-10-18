@@ -48,8 +48,8 @@ def main():
     
 
     # paths are mounted as folder, therefore, we are selecting the file from folder
-    # train_df = pd.read_csv(select_first_file(args.train_data_csv))
-    train_df = pd.read_csv(args.train_data_csv)
+    train_df = pd.read_csv(select_first_file(args.train_data_csv))
+    #train_df = pd.read_csv(args.train_data_csv)
 
     # Extracting the label column
     y_train = train_df.pop("default payment next month")
@@ -58,8 +58,8 @@ def main():
     X_train = train_df.values
 
     # paths are mounted as folder, therefore, we are selecting the file from folder
-    # test_df = pd.read_csv(select_first_file(args.test_data_csv))
-    test_df = pd.read_csv(args.test_data_csv)
+    test_df = pd.read_csv(select_first_file(args.test_data_csv))
+    #test_df = pd.read_csv(args.test_data_csv)
 
     # Extracting the label column
     y_test = test_df.pop("default payment next month")

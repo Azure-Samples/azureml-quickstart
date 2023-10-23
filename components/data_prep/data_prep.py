@@ -13,8 +13,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=str, help="path to input data")
     parser.add_argument("--test_train_ratio", type=float, required=False, default=0.25)
-    parser.add_argument("--train_data", type=str, help="path to train data")
-    parser.add_argument("--test_data", type=str, help="path to test data")
+    parser.add_argument("--train_data_csv", type=str, help="name of train data")
+    parser.add_argument("--test_data_csv", type=str, help="name of test data")
     args = parser.parse_args()
 
     # Start Logging
@@ -34,10 +34,21 @@ def main():
         test_size=args.test_train_ratio,
     )
 
-    # output paths are mounted as folder, therefore, we are adding a filename to the path
-    credit_train_df.to_csv(os.path.join(args.train_data, "data.csv"), index=False)
+    os.makedirs(args.train_data_csv, exist_ok=True)
+    os.makedirs(args.test_data_csv, exist_ok=True)
 
-    credit_test_df.to_csv(os.path.join(args.test_data, "data.csv"), index=False)
+    print("???!!!", args.train_data_csv)
+
+    # output paths are mounted as folder, therefore, we are adding a filename to the path
+    # train_data_path = os.path.join(args.train_data, "data.csv")
+    # print("train_data_path", os.path.abspath(train_data_path))
+
+
+    credit_train_df.to_csv(os.path.join(os.getcwd(), args.train_data_csv, "data.csv"), index=False)
+
+    # test_data_path = os.path.join(args.test_data, "data.csv")
+    # print("test_data_path", os.path.abspath(test_data_path))
+    credit_test_df.to_csv(os.path.join(os.getcwd(), args.test_data_csv, "data.csv"), index=False)
 
     # Stop Logging
     mlflow.end_run()

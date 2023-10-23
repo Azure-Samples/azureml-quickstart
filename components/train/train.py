@@ -13,7 +13,14 @@ def select_first_file(path):
     Returns:
         str: full path of selected file
     """
+    
+    print("path: ", path)
+    
     files = os.listdir(path)
+    
+    print("Files in path: ", files)
+
+
     return os.path.join(path, files[0])
 
 
@@ -31,16 +38,18 @@ def main():
 
     # input and output arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train_data", type=str, help="path to train data")
-    parser.add_argument("--test_data", type=str, help="path to test data")
+    parser.add_argument("--train_data_csv", type=str, help="path to train data")
+    parser.add_argument("--test_data_csv", type=str, help="path to test data")
     parser.add_argument("--n_estimators", required=False, default=100, type=int)
     parser.add_argument("--learning_rate", required=False, default=0.1, type=float)
     parser.add_argument("--registered_model_name", type=str, help="model name")
     parser.add_argument("--model", type=str, help="path to model file")
     args = parser.parse_args()
+    
 
     # paths are mounted as folder, therefore, we are selecting the file from folder
-    train_df = pd.read_csv(select_first_file(args.train_data))
+    train_df = pd.read_csv(select_first_file(args.train_data_csv))
+    #train_df = pd.read_csv(args.train_data_csv)
 
     # Extracting the label column
     y_train = train_df.pop("default payment next month")
@@ -49,7 +58,8 @@ def main():
     X_train = train_df.values
 
     # paths are mounted as folder, therefore, we are selecting the file from folder
-    test_df = pd.read_csv(select_first_file(args.test_data))
+    test_df = pd.read_csv(select_first_file(args.test_data_csv))
+    #test_df = pd.read_csv(args.test_data_csv)
 
     # Extracting the label column
     y_test = test_df.pop("default payment next month")

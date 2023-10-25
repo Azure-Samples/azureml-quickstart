@@ -43,7 +43,7 @@ https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resou
 
 ### AI/ML Pipeline Workshops
 
-This workshop repository is comprized of a number of example notebooks, which are organized as follows: 
+This workshop repository is comprized of a number of example notebooks. You can choose a path of running the notebooks using AML Python SDK or CLI. The CLI notebooks end _CLI.ipynb.   Notebooks are organized as follows: 
 
 ![image](media/ai_workflow_workshops.jpg)
 

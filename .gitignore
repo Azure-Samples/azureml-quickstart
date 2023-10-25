@@ -141,3 +141,6 @@ config.json
 # Environment variables file
 .env
 
+dependencies/
+dataimport.yml
+register_model.yml

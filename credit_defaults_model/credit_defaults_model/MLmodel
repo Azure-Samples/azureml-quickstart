@@ -1,0 +1,16 @@
+artifact_path: credit_defaults_model
+flavors:
+  python_function:
+    env: conda.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    python_version: 3.8.13
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 0.24.2
+mlflow_version: 1.26.1
+model_uuid: 0bdaee4099bf491b8ced3b85bfa06439
+run_id: icy_drawer_1l1ngncbcf
+utc_time_created: '2022-11-08 20:29:56.862484'

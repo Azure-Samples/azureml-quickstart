@@ -1,0 +1,40 @@
+# This is a basic workflow to help you get started with Actions
+name: 06a - Endpoint Create
+on:
+  workflow_dispatch:
+    inputs:
+      resource_group:
+        description: 'Resource group name'
+        required: true
+        default: 'rg-dev-mlops' 
+        type: string
+      aml_workspace:
+        description: 'Azure Machine Learning workspace name'
+        required: true
+        default: 'mlw-dev-mlops' 
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@main
+    - name: Install az ml extension
+      run: az extension add -n ml -y
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: Set Azure ML workspace as default
+      run: |
+        az configure --defaults group="${{ github.event.inputs.resource_group }}"
+        az configure --defaults workspace="${{ github.event.inputs.aml_workspace }}"
+    - name: Deploy Model
+      id: deploy
+      run: |
+        cd src
+        az ml online-endpoint create -f endpoint.yml
+        #az ml online-endpoint create --name my-endpoint -f endpoint.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops

@@ -1,0 +1,29 @@
+# This is a basic workflow to help you get started with Actions
+name: 05b-List models in prod
+
+on:
+  workflow_dispatch
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    environment:
+      name: PROD
+    steps:
+    - name: check out repo
+      uses: actions/checkout@v2
+    - name: install az ml extension
+      run: az extension add -n ml -y
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: Set Azure ML workspace as default
+      run: |
+        az configure --defaults group="${{ github.event.inputs.resource_group }}"
+        az configure --defaults workspace="${{ github.event.inputs.aml_workspace }}"
+    - name: LIST MODELS
+      id: aml_listsmodel
+      run: |
+        cd src 
+        az ml model list --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops

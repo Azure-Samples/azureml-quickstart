@@ -1,0 +1,44 @@
+name: 03-On Merge Run AML Training Job
+
+on: 
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  onmerge:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@main
+    - name: Install az ml extension
+      run: az extension add -n ml -y
+
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+
+    - name: Set Azure ML workspace as default
+      run: |
+        az configure --defaults group="rg-dev-mlops"
+        az configure --defaults workspace="mlw-dev-mlops"
+
+    - name: Install Flake8
+      run: |
+        python -m pip install flake8
+    - name: Run linting tests
+      run: | 
+        flake8 src/model/
+
+    - name: Install pytest
+      run: |
+        python -m pip install pytest mlflow sklearn
+    - name: Run pytest
+      run: | 
+        python -m pytest tests 
+
+    - name: Run AML Training Job
+      run: |
+        cd src
+        az ml job create --file job-cluster.yml

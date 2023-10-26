@@ -1,0 +1,5 @@
+$schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
+name: credit_defaults_model
+path: ./deploy/credit_defaults_model/
+type: mlflow_model
+description: Credit Defaults Model.

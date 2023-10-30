@@ -16,3 +16,4 @@ dependencies:
     - ipykernel~=6.0
     - matplotlib
     - pyarrow
+    - python-dotenv

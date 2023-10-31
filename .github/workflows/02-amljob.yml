@@ -32,4 +32,5 @@ jobs:
         az configure --defaults workspace="${{ github.event.inputs.aml_workspace }}"
     - name: Run AML Training Job
       run: |
-        az ml job create --file dependencies/cli_job.yml
+        cd src
+        az ml job create --file ../dependencies/cli_job.yml

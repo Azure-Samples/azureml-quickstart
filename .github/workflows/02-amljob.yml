@@ -33,4 +33,4 @@ jobs:
     - name: Run AML Training Job
       run: |
         cd src
-        az ml job create --file job-cluster.yml
+        az ml job create --file dependencies/cli_job.yml

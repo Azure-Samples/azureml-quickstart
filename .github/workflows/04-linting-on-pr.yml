@@ -1,7 +1,8 @@
 name: 04-Linting PR
 
 on: 
-  pull_request:
+  workflow_dispatch:
+  # pull_request:
 
 jobs:
   lintpr:

@@ -1,5 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
-name: credit_cards
-description: Data asset created from local file.
-type: uri_file
-path: data/default_of_credit_card_clients.csv

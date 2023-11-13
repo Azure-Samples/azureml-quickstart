@@ -58,7 +58,6 @@ Open run all cells in the Get Started start with Workshop [Setup New IPython Ker
 ### Step 2: Determine workflow type
 Azure Machine Learning workflow may be initiated via Cloud CI or by using Azure CLI tools in local Windows environment.  Please determine whether Cloud CI or local command line interface would best suite your needs.  
 
-### Step 2: Upon completion of the [Setup New IPython Kernel](00_SetupIpythonKernel.ipynb) guide
 
 
 

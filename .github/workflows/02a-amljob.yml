@@ -1,4 +1,4 @@
-name: 02a-Run AML Training Job
+name: 02a-Run AML Training Job and Register Model
 
 on:
   workflow_dispatch:

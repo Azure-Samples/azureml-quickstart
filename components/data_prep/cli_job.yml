@@ -1,0 +1,32 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+name: data_prep_component
+code: .
+command: >-
+  python data_prep.py 
+  --data ${{inputs.data}} 
+  --test_train_ratio ${{inputs.test_train_ratio}} 
+  --train_data_csv ${{outputs.train_data_csv}}
+  --test_data_csv ${{outputs.test_data_csv}}
+inputs:
+  data: 
+    type: uri_file
+  test_train_ratio: 
+    type: number
+  train_data_csv: 
+    type: string
+  test_data_csv: 
+    type: string
+outputs:
+  train_data_csv:
+    type: uri_folder
+    mode: rw_mount
+  test_data_csv:
+    type: uri_folder
+    mode: rw_mount
+environment: 
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
+  conda_file: ../conda.yml
+compute: azureml:cpu-cluster
+display_name: 04a_Pipeline_DataPrep_CLI_Job
+experiment_name: aigbb-aml-bootcamp
+description: Train a Machine Learning model using a workspace Data asset.

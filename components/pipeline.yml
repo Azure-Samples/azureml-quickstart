@@ -1,0 +1,61 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+display_name: 04a_Pipeline_DataPrep_Train_CLI_Pipeline
+description: Pipeline with 2 component jobs with data dependencies
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+outputs:
+  final_model:
+    mode: upload
+
+jobs:
+  component_data_prep:
+    type: command
+    inputs:
+      data: 
+        type: uri_file
+        path: azureml:credit_cards@latest
+      test_train_ratio: 0.25
+      train_data_csv: train 
+      test_data_csv: test
+    outputs:
+      train_data_csv: 
+        mode: upload
+      test_data_csv: 
+        mode: upload
+    code: data_prep
+    environment: 
+      image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
+      conda_file: conda.yml
+    compute: azureml:cpu-cluster
+    command: >-
+      python data_prep.py 
+      --data ${{inputs.data}} 
+      --test_train_ratio ${{inputs.test_train_ratio}} 
+      --train_data_csv ${{outputs.train_data_csv}}
+      --test_data_csv ${{outputs.test_data_csv}}
+      
+  component_train:
+    type: command
+    inputs:
+      train_data_csv: ${{parent.jobs.component_data_prep.outputs.train_data_csv}}
+      test_data_csv: ${{parent.jobs.component_data_prep.outputs.test_data_csv}}
+      learning_rate: 0.2
+      registered_model_name: credit_default_model
+    outputs:
+      model: ${{parent.outputs.final_model}}
+    code: train
+    environment: 
+      image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
+      conda_file: conda.yml 
+    compute: azureml:cpu-cluster
+    command: >-
+      python train.py 
+      --train_data ${{inputs.train_data_csv}} 
+      --test_data ${{inputs.test_data_csv}} 
+      --learning_rate ${{inputs.learning_rate}}
+      --registered_model_name ${{inputs.registered_model_name}} 
+      --model ${{outputs.model}}

@@ -1,4 +1,4 @@
-name: 02-Run AML Training Job
+name: 02a-Run AML Training Job
 
 on:
   workflow_dispatch:

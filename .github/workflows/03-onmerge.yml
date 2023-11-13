@@ -31,7 +31,7 @@ jobs:
       run: | 
         flake8 src/
 
-    - name: Run AML Training Job
+    - name: Run AML Pipeline Job
       run: |
         cd src
-        az ml job create --file dependencies/cli_job.yml
+        az ml job create --file ../components/pipeline.yml        

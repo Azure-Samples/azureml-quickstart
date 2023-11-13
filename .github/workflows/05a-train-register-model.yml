@@ -6,13 +6,14 @@ on:
       resource_group:
         description: 'Resource group name'
         required: true
-        default: 'rg-dev-mlops' 
+        default: 'rg_aml' 
         type: string
       aml_workspace:
         description: 'Azure Machine Learning workspace name'
         required: true
-        default: 'mlw-dev-mlops' 
+        default: 'aml-default' 
         type: string
+
 
 jobs:
   train:

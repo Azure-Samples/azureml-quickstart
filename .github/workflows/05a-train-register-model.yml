@@ -37,7 +37,7 @@ jobs:
       id: train
       run: |
         cd src   
-        echo "::set-output name=job_name::$(az ml job create --file job-cluster.yml | jq .display_name)"
+        echo "::set-output name=job_name::$(az ml job create --file ../dependencies/cli_job.yml | jq .display_name)"
   register:
     runs-on: ubuntu-latest
     environment: DEV
@@ -61,6 +61,6 @@ jobs:
         cd src
         model_name=${{ needs.train.outputs.job_name }}
         echo "model_name: $model_name"
-        az ml model create --name diabetes-model2 --version 1 --path azureml://jobs/$model_name/outputs/artifacts/paths/model/  --type mlflow_model
+        az ml model create --name credit_default_model --path azureml://jobs/$model_name/outputs/artifacts/paths/model/  --type mlflow_model
         #az ml model create -n diabetes-model -p runs:/patient_ear_3dqx3xgmxj/model --type mlflow_model
       

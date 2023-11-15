@@ -13,9 +13,7 @@ inputs:
   test_train_ratio: 0.2
   learning_rate: 0.25
   registered_model_name: credit_default_model
-environment: 
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
-  conda_file: conda.yml
+environment: azureml:aigbb-aml-bootcamp-environment@latest
 compute: azureml:cpu-cluster
 display_name: 03a_Train_Model_CLI_Job
 experiment_name: aigbb-aml-bootcamp

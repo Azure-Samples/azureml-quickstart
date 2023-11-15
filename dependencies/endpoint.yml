@@ -1,5 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
-name: demo-e2e-inference-env
-image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
-conda_file: conda-inference.yml
-description: Environment created from a Docker image plus Conda environment.

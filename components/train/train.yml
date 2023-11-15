@@ -18,9 +18,7 @@ outputs:
   model:
     type: uri_folder
 code: .
-environment:
-  # for this step, we'll use an AzureML curate environment
-  azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:1
+environment: azureml:aigbb-aml-bootcamp-environment@latest
 command: >-
   python train.py 
   --train_data ${{inputs.train_data_csv}} 

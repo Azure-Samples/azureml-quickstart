@@ -1,5 +1,5 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
-name: e-2-ecredit-endpoint-1
+name: credit-endpoint-3
 auth_mode: key
 tags:
     training_dataset : credit_defaults

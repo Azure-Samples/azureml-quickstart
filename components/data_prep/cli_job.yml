@@ -23,9 +23,7 @@ outputs:
   test_data_csv:
     type: uri_folder
     mode: rw_mount
-environment: 
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
-  conda_file: ../conda.yml
+environment: azureml:aigbb-aml-bootcamp-environment@latest
 compute: azureml:cpu-cluster
 display_name: 04a_Pipeline_DataPrep_CLI_Job
 experiment_name: aigbb-aml-bootcamp

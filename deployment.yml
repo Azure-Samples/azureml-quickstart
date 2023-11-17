@@ -1,11 +1,11 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
-name: green
-endpoint_name: e-2-ecredit-endpoint-1
+name: red
+endpoint_name: credit-endpoint-3
 model: 
     name: credit_defaults_model
     path: credit_defaults_model/credit_defaults_model
     type: mlflow_model
-environment: azureml:demo-e2e-inference-env@latest
+environment: azureml:aigbb-aml-bootcamp-dep-env@latest
 code_configuration:
   code: src
   scoring_script: score.py

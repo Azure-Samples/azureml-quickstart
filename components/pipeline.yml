@@ -14,6 +14,7 @@ outputs:
 jobs:
   component_data_prep:
     type: command
+    component: azureml:data_prep_component@latest
     inputs:
       data: 
         type: uri_file
@@ -26,20 +27,9 @@ jobs:
         mode: upload
       test_data_csv: 
         mode: upload
-    code: data_prep
-    environment: 
-      image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
-      conda_file: conda.yml
-    compute: azureml:cpu-cluster
-    command: >-
-      python data_prep.py 
-      --data ${{inputs.data}} 
-      --test_train_ratio ${{inputs.test_train_ratio}} 
-      --train_data_csv ${{outputs.train_data_csv}}
-      --test_data_csv ${{outputs.test_data_csv}}
-      
   component_train:
     type: command
+    component: azureml:train_credit_defaults_component@latest
     inputs:
       train_data_csv: ${{parent.jobs.component_data_prep.outputs.train_data_csv}}
       test_data_csv: ${{parent.jobs.component_data_prep.outputs.test_data_csv}}
@@ -47,15 +37,3 @@ jobs:
       registered_model_name: credit_default_model
     outputs:
       model: ${{parent.outputs.final_model}}
-    code: train
-    environment: 
-      image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
-      conda_file: conda.yml 
-    compute: azureml:cpu-cluster
-    command: >-
-      python train.py 
-      --train_data ${{inputs.train_data_csv}} 
-      --test_data ${{inputs.test_data_csv}} 
-      --learning_rate ${{inputs.learning_rate}}
-      --registered_model_name ${{inputs.registered_model_name}} 
-      --model ${{outputs.model}}

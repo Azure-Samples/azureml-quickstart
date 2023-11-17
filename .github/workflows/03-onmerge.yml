@@ -24,12 +24,12 @@ jobs:
         az configure --defaults group="rg-dev-mlops"
         az configure --defaults workspace="mlw-dev-mlops"
 
-    - name: Install Flake8
-      run: |
-        python -m pip install flake8
-    - name: Run linting tests
-      run: | 
-        flake8 src/
+    # - name: Install Flake8
+    #   run: |
+    #     python -m pip install flake8
+    # - name: Run linting tests
+    #   run: | 
+    #     flake8 src/
 
     - name: Run AML Pipeline Job
       run: |

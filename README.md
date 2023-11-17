@@ -36,27 +36,35 @@ The model deployment or outer loop phase consists of pre-production staging and 
 
 ![image](https://github.com/azeltov/aigbb-aml-bootcamp/assets/5873303/e0575c72-2c32-4c83-9660-82c34993027b)
 
-Pre-requisite: Create AML resources, follow this quickstart guide:
-
-https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2
-
-
-### AI/ML Pipeline Workshops
-
-This workshop repository is comprized of a number of example notebooks. You can choose a path of running the notebooks using AML Python SDK or CLI. The CLI notebooks end _CLI.ipynb.   Notebooks are organized as follows: 
-
-![image](media/ai_workflow_workshops.jpg)
-
-## Workshop Steps
+## Pre-requisites for Workshop Steps: 
 
 ### Step 0: Completion Pre-requisites.
 https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2
 
 ### Step 1: Setup Ipython Kernel
-Open run all cells in the Get Started start with Workshop [Setup New IPython Kernel](00_SetupIpythonKernel.ipynb) notebook. 
+Open run all cells in the Get Started start with Workshop [00_SetupIpythonKernel.ipynb](00_SetupIpythonKernel.ipynb) notebook. 
 
 ### Step 2: Determine workflow type
-Azure Machine Learning workflow may be initiated via Cloud CI or by using Azure CLI tools in local Windows environment.  Please determine whether Cloud CI or local command line interface would best suite your needs.  
+Azure Machine Learning workflow may be initiated via Cloud CI or by using Azure CLI tools in local Windows environment.  Please determine whether Cloud CI or local command line interface would best suite your needs. Than choose the appropriate track you want to run. You can run 1, 2 or all 3 tracks. If you are new we recommend you start with Track 1: AML Python Notebooks using SDK and then move to Track 2: Use AML CLI and YAML to run ML workflow. The CLI notebooks end _CLI.ipynb.
+
+
+## AI/ML Workshops
+
+This workshop repository is comprized of a number of 3 Tracks. You can choose a path of running the notebooks using AML Python SDK or CLI or MlOps. The CLI notebooks end _CLI.ipynb.   Notebooks are organized as follows: 
+
+
+### Track 1: AML Python Notebooks using SDK
+
+![image](media/ai_workflow_workshops.jpg)
+
+### Track 2: Use AML CLI and YAML to run ML workflow. The CLI notebooks end _CLI.ipynb
+
+Start with [02_UploadData_CLI.ipynb](02_UploadData_CLI.ipynb) if you have not run track 1. If you did you can jump straight to [03a_Train_Model_CLI.ipynb](03a_Train_Model_CLI.ipynb)
+
+### Track 3: Use MLOps to run ML workflow. The MLOps github actions are stored in .github/workflows folder and use yaml files stored in dependencies folder.
+
+Documentation for MLOps is coming soon...
+
 
 
 

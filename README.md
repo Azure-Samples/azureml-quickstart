@@ -66,6 +66,15 @@ Start with [02_UploadData_CLI.ipynb](02_UploadData_CLI.ipynb) if you have not ru
 Documentation for MLOps is coming soon...
 
 
+## If you want to contribute to this repository. 
+
+Please add this to your local .git/config  This is required to strip notebook output before commiting to git. It helps with git merge conflicts.
+
+```
+[filter "strip-notebook-output"]
+clean = "jupyter nbconvert --ClearOutputPreprocessor.enabled=True --ClearMetadataPreprocessor.enabled=True --to=notebook --stdin --stdout --log-level=ERROR"
+```
+
 
 
 

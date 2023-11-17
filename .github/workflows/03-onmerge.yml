@@ -21,8 +21,8 @@ jobs:
 
     - name: Set Azure ML workspace as default
       run: |
-        az configure --defaults group="rg-dev-mlops"
-        az configure --defaults workspace="mlw-dev-mlops"
+        az configure --defaults group="rg_aml"
+        az configure --defaults workspace="aml-default"
 
     # - name: Install Flake8
     #   run: |

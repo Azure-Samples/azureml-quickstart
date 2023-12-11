@@ -1,4 +1,4 @@
-# This is AI GBB Workshop/Bootcamp for Azure Machine Learning v2
+# This is AI GBB Workshop for Azure Machine Learning v2
 
 This tutorial is an introduction to some of the most used features of the Azure Machine Learning service.  In it, you will create, register and deploy a model. This tutorial will help you become familiar with the core concepts of Azure Machine Learning and their most common usage. 
 

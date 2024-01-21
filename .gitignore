@@ -141,3 +141,4 @@ config.json
 # Environment variables file
 .env
 
+pytorch-image-distributed-demo/.DS_Store

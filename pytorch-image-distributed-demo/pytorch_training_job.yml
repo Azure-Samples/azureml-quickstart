@@ -1,0 +1,44 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: ./src/pytorch_dl_train/
+command: >-
+    python train.py \
+        --train_images ${{inputs.train_images}} \
+        --valid_images ${{inputs.valid_images}} \
+        --batch_size ${{inputs.batch_size}} \
+        --num_workers ${{inputs.num_workers}} \
+        --prefetch_factor ${{inputs.prefetch_factor}} \
+        --model_arch ${{inputs.model_arch}} \
+        --model_arch_pretrained ${{inputs.model_arch_pretrained}} \
+        --num_epochs ${{inputs.num_epochs}} \
+        --learning_rate ${{inputs.learning_rate}} \
+        --momentum ${{inputs.momentum}} \
+        --register_model_as ${{inputs.register_model_as}} \
+        --enable_profiling ${{inputs.enable_profiling}}
+inputs:
+  train_images:
+    type: uri_folder
+    path: azureml://datastores/workspaceblobstore/paths/tutorial-datasets/dogs/
+    mode: download
+  valid_images:
+    type: uri_folder
+    path: azureml://datastores/workspaceblobstore/paths/tutorial-datasets/dogs/
+    mode: download
+  batch_size: 64
+  num_workers: 5  # number of cpus for pre-fetching
+  prefetch_factor: 2  # number of batches fetched in advance
+  model_arch: "resnet18"
+  model_arch_pretrained: "True"
+  num_epochs: 7
+  learning_rate: 0.01
+  momentum: 0.01
+  register_model_as: "dogs_dev"
+  # register_model_as: "places_dev",
+  enable_profiling: "True"
+environment: azureml:AzureML-pytorch-1.10-ubuntu18.04-py38-cuda11-gpu@latest
+compute: azureml:gpu-nc12sv3
+resources:
+  instance_count: 2
+  shm_size: 1000G
+display_name: pytorch_training_job
+experiment_name: pytorch_training_sample
+description: PyTorch training job

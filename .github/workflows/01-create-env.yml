@@ -1,4 +1,4 @@
-name: 02b-Run AML Pipeline
+name: 01-Create Custom AML Environment
 
 on:
   workflow_dispatch:
@@ -33,7 +33,3 @@ jobs:
     - name: Create Pipeline Environment
       run: |
         az ml environment create --file ./dependencies/job_env.yml
-    - name: Run AML Pipeline Job
-      run: |
-        cd src
-        az ml job create --file ../components/pipeline.yml

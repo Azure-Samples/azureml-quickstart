@@ -10,6 +10,9 @@ from sklearn.model_selection import train_test_split
 def main():
     """Main function of the script."""
 
+    # Load a file named conda.yml into memory
+    
+
     # input and output arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=str, help="path to input data")

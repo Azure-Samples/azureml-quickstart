@@ -1,0 +1,14 @@
+code: src 
+command: 
+  python train.py ;  sleep 1h
+  # you can add a command like "sleep 1h" to reserve the compute resource is reserved after the script finishes running.
+environment: azureml:whisper_environment:1
+compute: azureml:DefLabelNC6v3
+services:
+    my_vs_code:
+      type: vs_code
+      nodes: all # For distributed jobs, use the `nodes` property to pick which node you want to enable interactive services on. If `nodes` are not selected, by default, interactive applications are only enabled on the head node. Values are "all", or compute node index (for ex. "0", "1" etc.)
+    my_jupyter_lab:
+      type: jupyter_lab
+      nodes: all
+ 

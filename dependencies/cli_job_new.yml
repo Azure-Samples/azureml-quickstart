@@ -1,0 +1,22 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: ../src
+command: >-
+  python main_new.py 
+  --data ${{inputs.data}} 
+  --test_train_ratio ${{inputs.test_train_ratio}} 
+  --learning_rate ${{inputs.learning_rate}} 
+  --registered_model_name ${{inputs.registered_model_name}}
+inputs:
+  data: 
+    type: uri_file
+    path: azureml:credit-card_csv:2023.10.05.154542
+  test_train_ratio: 0.2
+  learning_rate: 0.25
+  registered_model_name: credit_default_model
+environment: 
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
+  conda_file: conda.yml
+compute: azureml:cpu-cluster
+display_name: 03b_ReTrain_Model_CLI_Job
+experiment_name: aigbb-aml-bootcamp
+description: Train a Machine Learning model using a workspace Data asset.

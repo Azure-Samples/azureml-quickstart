@@ -5,7 +5,7 @@ type: command
 
 code: src
 
-command: /bin/bash ./gpu_perf_driver.sh; sleep 1200
+command: /bin/bash ./gpu_perf_driver.sh
 
 # to iterate quickly on your environment design, use inline
 environment: file:./environments/azureml/env.yml

@@ -38,7 +38,7 @@ jobs:
       id: train
       run: |
         cd src   
-        echo "::set-output name=job_name::$(az ml job create --file ../dependencies/cli_job.yml | jq .display_name)"
+        echo "job_name=$(az ml job create --file ../dependencies/cli_job.yml | jq .display_name)" >> "$GITHUB_OUTPUT"
   register:
     runs-on: ubuntu-latest
     environment: DEV

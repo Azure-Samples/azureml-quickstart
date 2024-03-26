@@ -1,0 +1,39 @@
+$schema: http://azureml/sdk-2-0/SparkJob.json
+type: spark
+
+code: ./src 
+entry:
+  file: data_engineering.py
+
+conf:
+  spark.driver.cores: 8
+  spark.driver.memory: 56g
+  spark.executor.cores: 8
+  spark.executor.memory: 56g
+  spark.executor.instances: 12
+
+inputs:
+  invoice_data:
+    type: uri_file
+    path: <ABFSS_INPUT_URI>
+    mode: direct
+
+outputs:
+  training_data:
+    type: uri_folder
+    path: <ABFSS_OUTPUT_URI>
+    mode: direct
+
+args: >-
+  --invoice_data ${{inputs.invoice_data}}
+  --training_data ${{outputs.training_data}}
+
+identity:
+  type: user_identity
+
+environment: 
+      conda_file: ./dependencies/conda.yml
+
+resources:
+  instance_type: standard_e16s_v3
+  runtime_version: "3.3"

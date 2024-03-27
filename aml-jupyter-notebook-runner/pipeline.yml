@@ -1,0 +1,24 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+description: Prep Data and Train model
+display_name: papermill-pipeline-example
+experiment_name: papermill-pipeline-example
+jobs:
+  prep_job:
+    type: command
+    code: src
+    environment: azureml:papermill-env@latest
+    compute: azureml:cpu-cluster
+    command: >-
+      papermill -k python prep.ipynb ./outputs/prep.output.ipynb 
+
+
+  train_job:
+    type: command
+    code: src
+    environment: azureml:papermill-env@latest
+    compute: azureml:cpu-cluster
+    command: >-
+      papermill -k python train.ipynb ./outputs/train.output.ipynb 
+

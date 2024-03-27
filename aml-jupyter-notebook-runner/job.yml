@@ -1,0 +1,12 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: src
+
+command: >-
+  papermill -k python train.ipynb ./outputs/train.output.ipynb
+
+
+environment: azureml:papermill-env@latest
+compute: azureml:cpu-cluster
+display_name: papermill-example
+experiment_name: papermill-example
+description: Train a LightGBM model on the Iris dataset.

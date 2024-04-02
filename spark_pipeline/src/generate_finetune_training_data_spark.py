@@ -54,6 +54,8 @@ print(f"Got df_result", df_result)
 
 df_result.show()
 
+df_result = df_result.coalesce(1)
+
 df_result.write.mode('overwrite').option("delimiter", ",").option("header", True)\
     .csv(f"{args.captured_data_training}/merged_data.csv")
 

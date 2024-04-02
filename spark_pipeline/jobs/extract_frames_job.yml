@@ -1,0 +1,20 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: ../src
+command: >-
+  python extract_frames.py ${{inputs.input_path}} ${{outputs.output_path}} 
+inputs:
+  input_path: 
+    type: uri_folder
+    #path: azureml:captured_data@latest
+    mode: ro_mount
+outputs:
+  output_path:
+    type: uri_folder
+    #name: test_video_frames
+    mode: upload
+environment: azureml:opencv_environment@latest
+compute: azureml:antonslutsky1
+display_name: extract_frames_base64_cpu
+experiment_name: ascii_finetune
+name: extract_frames_base64_cpu
+description: Extracts vidio frames as base64 strings

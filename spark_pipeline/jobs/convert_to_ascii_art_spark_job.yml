@@ -1,0 +1,41 @@
+$schema: http://azureml/sdk-2-0/SparkJob.json
+type: spark
+
+name: convert_base64_frames_to_ascii_art_spark
+
+code: ../src 
+entry:
+  file: convert_image_to_ascii_art_spark.py
+
+conf:
+  spark.driver.cores: 8
+  spark.driver.memory: 56g
+  spark.executor.cores: 8
+  spark.executor.memory: 56g
+  spark.executor.instances: 12
+
+inputs:
+  frames_dir:
+    type: uri_folder
+    #path: azureml:test_video_frames@latest
+    mode: direct
+
+outputs:
+  frames_ascii_dir:
+    type: uri_folder
+    mode: direct
+    #path: abfss://tshirtcontainer@tshirtonelakestorage.dfs.core.windows.net/output_dir
+    #name: test_video_frames_ascii
+args: >-
+  --frames_dir ${{inputs.frames_dir}} --frames_ascii_dir ${{outputs.frames_ascii_dir}}
+
+identity:
+  type: user_identity
+
+environment: 
+  name: azureml:opencv_environment@latest
+  conda_file: ./conda.yml
+
+resources:
+  instance_type: standard_e16s_v3
+  runtime_version: "3.3"

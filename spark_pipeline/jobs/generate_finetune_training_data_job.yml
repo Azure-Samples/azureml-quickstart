@@ -1,0 +1,47 @@
+$schema: http://azureml/sdk-2-0/SparkJob.json
+type: spark
+
+name: generate_finetune_training_data_spark1
+
+code: ../src 
+entry:
+  file: generate_finetune_training_data_spark.py
+
+conf:
+  spark.driver.cores: 8
+  spark.driver.memory: 56g
+  spark.executor.cores: 8
+  spark.executor.memory: 56g
+  spark.executor.instances: 12
+
+inputs:
+  frames_ascii_dir:
+    type: uri_folder
+    #path: azureml://subscriptions/781b03e7-6eb7-4506-bab8-cf3a0d89b1d4/resourcegroups/antonslutsky-rg/workspaces/gpu-workspace/datastores/workspaceblobstore/paths/azureml/c4255581-599a-441a-9ffa-b93bfa9e7842/frames_ascii_dir/
+    mode: direct
+  captured_data:
+    type: uri_folder
+    #path: azureml://subscriptions/781b03e7-6eb7-4506-bab8-cf3a0d89b1d4/resourcegroups/antonslutsky-rg/workspaces/gpu-workspace/datastores/workspaceblobstore/paths/azureml/c4255581-599a-441a-9ffa-b93bfa9e7842/frames_ascii_dir/
+    mode: direct
+
+outputs:
+  captured_data_training:
+    type: uri_folder
+    mode: direct
+    #path: abfss://tshirtcontainer@tshirtonelakestorage.dfs.core.windows.net/output_dir
+    #name: captured_data_training
+args: >-
+  --frames_ascii_dir ${{inputs.frames_ascii_dir}} 
+  --captured_data ${{inputs.captured_data}} 
+  --captured_data_training ${{outputs.captured_data_training}}
+
+identity:
+  type: user_identity
+
+environment: 
+  name: azureml:opencv_environment@latest
+  conda_file: ./conda.yml
+
+resources:
+  instance_type: standard_e16s_v3
+  runtime_version: "3.3"

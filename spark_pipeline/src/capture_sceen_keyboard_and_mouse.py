@@ -51,11 +51,13 @@ def capture_sceen_keyboard_and_mouse(output_dir, record_seconds = 30, fps = 12.0
         #cv2.imshow("screenshot", frame)
         #if cv2.waitKey(1) == ord("q"):
         #    break
+    
+
 
     # Clean up
     out.release()
     cv2.destroyAllWindows()
-
+    print("Waiting for threads to finish")
     input_capture_thread.join()
     print("Input collection finished!")
     mouse.unhook(mouse_events.append)

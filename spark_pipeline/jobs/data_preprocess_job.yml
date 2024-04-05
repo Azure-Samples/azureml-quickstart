@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 name: new_text_generation_datapreprocess
 #version: 0.0.39
-display_name: New Text Generation DataPreProcess
+display_name: Spark Text Generation DataPreProcess
 is_deterministic: True
 type: command
 description: Component to preprocess data for text generation task

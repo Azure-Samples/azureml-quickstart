@@ -14,8 +14,8 @@ def convert_image_to_ascii(img):
     img = img.convert('L')
 
     # chars = ["@", "J", "D", "%", "*", "P", "+", "Y", "$", ",", "."]
-    #chars = ["@", "J", "D", "%", "*", "P", "+", "Y", "$", ",", "."]
-    chars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"]
+    chars = ["@", "J", "D", "%", "*", "P", "+", "Y", "$", "'", "."]
+    #chars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"]
 
 
     pixels = img.getdata()

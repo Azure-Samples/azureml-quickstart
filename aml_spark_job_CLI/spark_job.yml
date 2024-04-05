@@ -15,13 +15,13 @@ conf:
 inputs:
   invoice_data:
     type: uri_file
-    path: <ABFSS_INPUT_URI>
+    path: abfss://blackline@vinceprojectdata.dfs.core.windows.net/invoices_small
     mode: direct
 
 outputs:
   training_data:
     type: uri_folder
-    path: <ABFSS_OUTPUT_URI>
+    name: invoices_output
     mode: direct
 
 args: >-

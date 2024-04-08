@@ -11,23 +11,14 @@ numpy2ri.activate()
 
 
 class Model(object):
-    """
-    R Model Loader
-
-    Attributes
-    ----------
-    model : R object
-    """
 
     def __init__(self):
         self.model = None
 
     def load(self, path):
-        #print("??????????????", path, os.listdir(path))
         model_rds_path = "{}.rds".format(path)
         model_dep_path = "{}.dep".format(path)
-        print(">>>>>>>>>>>>>>>>>", model_rds_path, os.path.isfile(model_rds_path))
-
+        
         utils = importr('utils')
         utils.install_packages('e1071')
 
@@ -43,8 +34,7 @@ class Model(object):
         return self
 
     def predict(self, X):
-      
-
+    
         if self.model is None:
             raise Exception("There is no Model")
         
@@ -52,16 +42,13 @@ class Model(object):
             X = np.array(X)
 
         pred = r.predict(self.model, X)
-        print("pred:", pred)
-        # probs = r.attr(pred, "probabilities")
-        # print("Probs:", probs)
 
         return np.array(pred)
 
 def init():
     global model
     model_path = os.path.join(
-        os.getenv("AZUREML_MODEL_DIR"), "r_mlflow_pyfunc_svm/artifacts/artifact"
+        os.getenv("AZUREML_MODEL_DIR"), "r_mlflow_pyfunc_rpy2/artifacts/artifact"
     )
 
     model = Model()

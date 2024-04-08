@@ -43,16 +43,7 @@ class Model(object):
         return self
 
     def predict(self, X):
-        """
-        Perform classification on samples in X.
-        
-        Parameters
-        ----------
-        X : array, shape (n_samples, n_features)
-        Returns
-        -------
-        pred_probs : array, shape (n_samples, probs)
-        """
+      
 
         if self.model is None:
             raise Exception("There is no Model")
@@ -62,36 +53,23 @@ class Model(object):
 
         pred = r.predict(self.model, X)
         print("pred:", pred)
-        probs = r.attr(pred, "probabilities")
-        print("Probs:", probs)
+        # probs = r.attr(pred, "probabilities")
+        # print("Probs:", probs)
 
-        return json.dumps(probs)
+        return np.array(pred)
 
 def init():
     global model
-    # AZUREML_MODEL_DIR is an environment variable created during deployment.
-    # It is the path to the model folder (./azureml-models/$MODEL_NAME/$VERSION)
-    # Please provide your model's folder name if there is one
     model_path = os.path.join(
         os.getenv("AZUREML_MODEL_DIR"), "r_mlflow_pyfunc_svm/artifacts/artifact"
     )
-
-    # print("!!!!!!!!!!!!!!!!!!", model_path)
-    # print("os.getenv('AZUREML_MODEL_DIR'):", os.getenv("AZUREML_MODEL_DIR"))
-    # print("os.listdir(os.getenv('AZUREML_MODEL_DIR')):", os.listdir(os.getenv("AZUREML_MODEL_DIR")))
-    # print("os.listdir(model_path):", os.listdir(model_path))
-    # print("../os.getenv('AZUREML_MODEL_DIR'):", "../"+os.getenv("AZUREML_MODEL_DIR"))
 
     model = Model()
     model.load(model_path)
 
 
 def run(raw_data):
-    """
-    This function is called for every invocation of the endpoint to perform the actual scoring/prediction.
-    In the example we extract the data from the json input and call the scikit-learn model's predict()
-    method and return the result back
-    """
+
     logging.info("model 1: request received")
     data = json.loads(raw_data)["data"]
     data = np.array(data)

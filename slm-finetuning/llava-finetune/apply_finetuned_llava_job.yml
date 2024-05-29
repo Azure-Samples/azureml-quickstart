@@ -1,13 +1,11 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
-code: ./src
-
 command: >- 
-  echo "./finetune_llava.sh ${{inputs.data_dir}} ${{outputs.out_dir}}"; sleep 60000
+  echo "Model Home: ${{inputs.llava_model_home}} Output Dir: ${{outputs.out_dir}}"; sleep 70000
 inputs:
-  data_dir: 
+  llava_model_home: 
     type: uri_folder
-    mode: ro_mount
-    #path: azureml:Multimodal-Fatima_OK@latest
+    #mode: ro_mount
+    path: azureml:azureml_tough_cherry_s5gzbchvct_output_data_out_dir:1
 outputs:
   out_dir: 
     type: uri_folder
@@ -27,7 +25,7 @@ services:
       nodes: all
 compute: azureml:fine-tune-cluster
 #compute: azureml:a100-low-priority
-display_name: finetune_llava_job
-name: finetune_llava_job
+display_name: apply_finetuned_llava_job
 experiment_name: finetune_llava
-description: Finetune LlaVa
+#name: apply_finetuned_llava_job
+description: Apply finetuned LlaVa weights.

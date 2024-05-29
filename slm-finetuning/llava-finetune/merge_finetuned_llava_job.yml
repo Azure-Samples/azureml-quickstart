@@ -1,18 +1,16 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
-code: ./src
-
 command: >- 
-  echo "./finetune_llava.sh ${{inputs.data_dir}} ${{outputs.out_dir}}"; sleep 60000
+  python /LLaVA/scripts/merge_lora_weights.py --model-path ${{inputs.checkpoints_home}}/checkpoints/llava-v1.5-13b-task-lora --model-base liuhaotian/llava-v1.5-13b --save-model-path ${{outputs.llava_out_dir}}
 inputs:
-  data_dir: 
+  checkpoints_home: 
     type: uri_folder
-    mode: ro_mount
-    #path: azureml:Multimodal-Fatima_OK@latest
+    #mode: ro_mount
+    path: azureml:azureml_bright_office_tsywj86mp0_output_data_out_dir:1
 outputs:
-  out_dir: 
-    type: uri_folder
+  llava_out_dir: 
+    type: custom_model
     mode: upload
-environment: azureml:llava_finetuning@latest
+environment: azureml:llava_finetuning:16
 resources:
   instance_count: 1
 distribution:
@@ -27,7 +25,7 @@ services:
       nodes: all
 compute: azureml:fine-tune-cluster
 #compute: azureml:a100-low-priority
-display_name: finetune_llava_job
-name: finetune_llava_job
+display_name: merge_finetuned_llava_job
+#name: merge_finetuned_llava_job
 experiment_name: finetune_llava
-description: Finetune LlaVa
+description: Save finetuned LlaVa weights.

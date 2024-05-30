@@ -16,13 +16,24 @@ import requests
 from PIL import Image
 from io import BytesIO
 from transformers import TextStreamer
+import base64
+import io
 
 def load_image(image_file):
+    img_base64_pref = 'data:image/jpeg;base64,'
+
     if image_file.startswith('http://') or image_file.startswith('https://'):
         response = requests.get(image_file)
         image = Image.open(BytesIO(response.content)).convert('RGB')
+    elif image_file.startswith(img_base64_pref):
+        img_data = image_file[len(img_base64_pref):]
+        print("Image data:", img_data)
+        msg = base64.b64decode(img_data)
+        buf = io.BytesIO(msg)
+        image = Image.open(buf).convert('RGB')
     else:
         image = Image.open(image_file).convert('RGB')
+    
     return image
 
 def init():
@@ -99,6 +110,10 @@ def run(raw_data):
     print(raw_data)
     print("------------------------ ~~~~ --------------------------------")
 
+    json_data = json.loads(raw_data)
+
+
+
     conv = conv_templates[args.conv_mode].copy()
     if "mpt" in model_name.lower():
         roles = ('user', 'assistant')
@@ -106,8 +121,11 @@ def run(raw_data):
         roles = conv.roles
     
     logging.info("model 1: request received")
-    image_file = "https://llava-vl.github.io/static/images/view.jpg" #json.loads(raw_data)["data"]
+    #image_file = "https://llava-vl.github.io/static/images/view.jpg" #json.loads(raw_data)["data"]
     
+    image_file = json_data["image_file"]
+    image_prompt = json_data["image_prompt"]
+
     image = load_image(image_file)
     image_size = image.size
     # Similar operation in model_worker.py
@@ -119,7 +137,7 @@ def run(raw_data):
 
 #    while True:
     #try:
-    inp = "Describe the image:" #input(f"{roles[0]}: ")
+    inp = image_prompt #"Describe the image:" #input(f"{roles[0]}: ")
     #except EOFError:
     #    inp = ""
     #if not inp:

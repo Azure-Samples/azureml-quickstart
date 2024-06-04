@@ -23,7 +23,8 @@ services:
     my_jupyter_lab:
       type: jupyter_lab
       nodes: all
-compute: azureml:fine-tune-cluster
+compute: azureml:antonslutsky1
+#compute: azureml:fine-tune-cluster
 #compute: azureml:a100-low-priority
 display_name: merge_finetuned_llava_job
 #name: merge_finetuned_llava_job

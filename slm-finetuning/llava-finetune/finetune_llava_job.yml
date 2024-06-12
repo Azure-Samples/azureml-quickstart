@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: ./src
+
+command: >- 
+  echo "./finetune_llava.sh ${{inputs.data_dir}} ${{outputs.out_dir}}"; sleep 60000
+inputs:
+  data_dir: 
+    type: uri_folder
+    mode: ro_mount
+    #path: azureml:Multimodal-Fatima_OK@latest
+outputs:
+  out_dir: 
+    type: uri_folder
+    mode: upload
+environment: azureml:llava_finetuning@latest
+resources:
+  instance_count: 1
+distribution:
+  type: pytorch 
+  process_count_per_instance: 4
+services:
+    my_vs_code:
+      type: vs_code
+      nodes: all # For distributed jobs, use the `nodes` property to pick which node you want to enable interactive services on. If `nodes` are not selected, by default, interactive applications are only enabled on the head node. Values are "all", or compute node index (for ex. "0", "1" etc.)
+    my_jupyter_lab:
+      type: jupyter_lab
+      nodes: all
+compute: azureml:fine-tune-cluster
+#compute: azureml:a100-low-priority
+display_name: finetune_llava_job
+name: finetune_llava_job
+experiment_name: finetune_llava
+description: Finetune LlaVa

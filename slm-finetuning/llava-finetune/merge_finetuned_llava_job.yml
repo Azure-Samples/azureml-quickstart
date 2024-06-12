@@ -1,0 +1,32 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+command: >- 
+  python /LLaVA/scripts/merge_lora_weights.py --model-path ${{inputs.checkpoints_home}}/checkpoints/llava-v1.5-13b-task-lora --model-base liuhaotian/llava-v1.5-13b --save-model-path ${{outputs.llava_out_dir}}
+inputs:
+  checkpoints_home: 
+    type: uri_folder
+    #mode: ro_mount
+    path: azureml:azureml_bright_office_tsywj86mp0_output_data_out_dir:1
+outputs:
+  llava_out_dir: 
+    type: custom_model
+    mode: upload
+environment: azureml:llava_finetuning:16
+resources:
+  instance_count: 1
+distribution:
+  type: pytorch 
+  process_count_per_instance: 4
+services:
+    my_vs_code:
+      type: vs_code
+      nodes: all # For distributed jobs, use the `nodes` property to pick which node you want to enable interactive services on. If `nodes` are not selected, by default, interactive applications are only enabled on the head node. Values are "all", or compute node index (for ex. "0", "1" etc.)
+    my_jupyter_lab:
+      type: jupyter_lab
+      nodes: all
+compute: azureml:antonslutsky1
+#compute: azureml:fine-tune-cluster
+#compute: azureml:a100-low-priority
+display_name: merge_finetuned_llava_job
+#name: merge_finetuned_llava_job
+experiment_name: finetune_llava
+description: Save finetuned LlaVa weights.

@@ -132,7 +132,8 @@ tokenizer = processor.tokenizer
 # Load dataset from disk
 #dataset_path = './data/burberry_dataset/burberry_dataset.csv'
 data_dir = sys.argv[1]
-dataset_path = f"{data_dir}/burberry_dataset/burberry_dataset.csv"
+#dataset_path = f"{data_dir}/burberry_dataset/burberry_dataset.csv"
+dataset_path = f"{data_dir}/sujet_dataset.csv"
 print("Dataset:", dataset_path)
 output_path = sys.argv[2]
 df = pd.read_csv(dataset_path)
@@ -276,7 +277,7 @@ for epoch in range(num_epochs):
         attention_mask = batch['attention_mask'].to(device)
         pixel_values = batch['pixel_values'].to(device)
         labels = input_ids.clone().detach()
-        actual_price = batch['price'].float().to(device)
+        #actual_price = batch['price'].float().to(device)
 
         outputs = model(
             input_ids=input_ids, 

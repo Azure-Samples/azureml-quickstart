@@ -15,6 +15,7 @@ import wandb
 import numpy as np
 from torchvision.transforms.functional import resize, to_pil_image
 
+
 import torch.optim as optim
 import torch.nn.functional as F
 
@@ -23,6 +24,55 @@ torch.manual_seed(3)
 
 # Initialize Weights & Biases for experiment tracking
 run = wandb.init(project="", entity="")
+
+
+# Custom Dataset class for Burberry Product Prices and Images
+class SujetProductDataset(Dataset):
+    def __init__(self, dataframe, tokenizer, max_length, image_size, image_dir):
+        self.dataframe = dataframe
+        self.tokenizer = tokenizer
+        self.tokenizer.padding_side = 'left'  # Set padding side to left
+        self.max_length = max_length
+        self.image_dir = image_dir
+        
+    def __len__(self):
+        return len(self.dataframe)
+
+    def __getitem__(self, idx):
+        # Get the row at the given index
+        row = self.dataframe.iloc[idx]
+        
+        # Create the text input for the model
+        text = f"<|user|>\n<|image_1|>What is shown in this image?<|end|><|assistant|>\Content: {row['content']}, Type: {row['document_type']}, Key Details: {row['key_details']}, Insights: {row['insights']}<|end|>"
+
+
+        image_file = row['doc_id']
+        
+        # Get the image path from the row
+        image_path = f"{self.image_dir}/images/{image_file}"
+
+        
+        # Tokenize the text input
+        encodings = self.tokenizer(text, truncation=True, padding='max_length', max_length=self.max_length)
+        
+        try:
+            # Load and transform the image
+            image = Image.open(image_path).convert("RGB")
+            image = self.image_transform_function(image)
+        except (FileNotFoundError, IOError):
+            # Skip the sample if the image is not found
+            return None
+        
+        # Add the image and price information to the encodings dictionary
+        encodings['pixel_values'] = image
+        #encodings['price'] = row['full_price']
+        
+        return {key: torch.tensor(val) for key, val in encodings.items()}
+
+    def image_transform_function(self, image):
+        # Convert the image to a numpy array
+        image = np.array(image)
+        return image
 
 # Custom Dataset class for Burberry Product Prices and Images
 class BurberryProductDataset(Dataset):
@@ -99,11 +149,13 @@ train_df = df.iloc[train_indices]
 val_df = df.iloc[val_indices]
 
 # Create dataset and dataloader for training set
-train_dataset = BurberryProductDataset(train_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
+#train_dataset = BurberryProductDataset(train_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
+train_dataset = SujetProductDataset(train_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 
 # Create dataset and dataloader for validation set
-val_dataset = BurberryProductDataset(val_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
+#val_dataset = BurberryProductDataset(val_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
+val_dataset = SujetProductDataset(val_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
 val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
 
 # Initialize the pre-trained model
@@ -120,7 +172,7 @@ optimizer = optim.AdamW(model.parameters(), lr=5e-5)
 num_epochs = 1
 eval_interval = 150  # Evaluate every 'eval_interval' steps
 loss_scaling_factor = 1000.0  # Variable to scale the loss by a certain amount
-save_dir = './saved_models'
+save_dir = f'./saved_models'
 step = 0
 accumulation_steps = 64  # Accumulate gradients over this many steps
 
@@ -167,7 +219,7 @@ def evaluate(model, val_loader, device, tokenizer, step, log_indices, max_sample
             attention_mask = batch['attention_mask'].to(device)
             pixel_values = batch['pixel_values'].to(device)
             labels = input_ids.clone().detach()
-            actual_price = batch['price'].item()
+            #actual_price = batch['price'].item()
 
             outputs = model(
                 input_ids=input_ids, 
@@ -179,10 +231,10 @@ def evaluate(model, val_loader, device, tokenizer, step, log_indices, max_sample
             total_loss += loss.item()
 
             # Calculate price error
-            predictions = torch.argmax(outputs.logits, dim=-1)
-            predicted_price = extract_price_from_predictions(predictions, tokenizer)
-            price_error = abs(predicted_price - actual_price)
-            total_price_error += price_error
+            # predictions = torch.argmax(outputs.logits, dim=-1)
+            # predicted_price = extract_price_from_predictions(predictions, tokenizer)
+            # price_error = abs(predicted_price - actual_price)
+            # total_price_error += price_error
 
             # Log images, ground truth texts, and predicted texts
             if i in log_indices:
@@ -200,10 +252,10 @@ def evaluate(model, val_loader, device, tokenizer, step, log_indices, max_sample
     wandb.log({"Evaluation Results step {}".format(step): table, "Step": step})
 
     avg_loss = total_loss / (i + 1)  # i+1 to account for the loop index
-    avg_price_error = total_price_error / (i + 1)
+    # avg_price_error = total_price_error / (i + 1)
     model.train()
 
-    return avg_loss, avg_price_error
+    return avg_loss #, avg_price_error
 
 # Set the model to training mode
 model.train()
@@ -235,7 +287,7 @@ for epoch in range(num_epochs):
         loss = outputs.loss
         total_loss = loss
         predictions = torch.argmax(outputs.logits, dim=-1)            
-        predicted_price = extract_price_from_predictions(predictions, tokenizer)
+        #predicted_price = extract_price_from_predictions(predictions, tokenizer)
 
         total_loss.backward()
 
@@ -247,7 +299,7 @@ for epoch in range(num_epochs):
             optimizer.zero_grad()
 
         total_train_loss += total_loss.item()
-        total_train_price_error += abs(predicted_price - actual_price.item())
+        #total_train_price_error += abs(predicted_price - actual_price.item())
         batch_count += 1
 
         # Log batch loss to Weights & Biases
@@ -267,27 +319,30 @@ for epoch in range(num_epochs):
             # Save the best model based on validation loss
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
-                best_model_path = os.path.join(save_dir, f"best_model")
+                best_model_path = output_path #os.path.join(save_dir, f"best_model")
                 model.save_pretrained(best_model_path, safe_serialization=False)
                 tokenizer.save_pretrained(best_model_path)
 
             avg_train_loss = total_train_loss / batch_count
-            avg_train_price_error = total_train_price_error / batch_count
+            #avg_train_price_error = total_train_price_error / batch_count
             wandb.log({
                 "Epoch": epoch,
                 "Average Training Loss": avg_train_loss,
-                "Average Training Price Error": avg_train_price_error
+                #"Average Training Price Error": avg_train_price_error
             })
             
-    print(f"Epoch: {epoch}, Average Training Loss: {avg_train_loss}, Average Training Price Error: {avg_train_price_error}")
+    #print(f"Epoch: {epoch}, Average Training Loss: {avg_train_loss}, Average Training Price Error: {avg_train_price_error}")
+    print(f"Epoch: {epoch}, Average Training Loss: {avg_train_loss}")
 
+
+    print("Best Model Path: ", best_model_path)
     # Log the best model to Weights & Biases
-    if best_model_path:
-        run.log_model(
-            path=best_model_path,
-            name="phi3-v-burberry",
-            aliases=["best"],
-        )
+    # if best_model_path:
+    #     run.log_model(
+    #         path=best_model_path,
+    #         name="phi3-v-burberry",
+    #         aliases=["best"],
+        # )
 
 # Finish the Weights & Biases run
 wandb.finish()

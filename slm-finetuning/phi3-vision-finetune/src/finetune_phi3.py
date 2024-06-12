@@ -309,13 +309,15 @@ for epoch in range(num_epochs):
         print(f"Epoch: {epoch}, Step: {step}, Batch Loss: {total_loss.item()}")
 
         if step % eval_interval == 0:
-            val_loss, val_price_error = evaluate(model, val_loader, device, tokenizer=tokenizer, log_indices=log_indices, step=step )
+            #val_loss, val_price_error = evaluate(model, val_loader, device, tokenizer=tokenizer, log_indices=log_indices, step=step )
+            val_loss = evaluate(model, val_loader, device, tokenizer=tokenizer, log_indices=log_indices, step=step )
             wandb.log({
                 "Validation Loss": val_loss,
-                "Validation Price Error (Average)": val_price_error,
+#                "Validation Price Error (Average)": val_price_error,
                 "Step": step
             })
-            print(f"Step: {step}, Validation Loss: {val_loss}, Validation Price Error (Normalized): {val_price_error}")
+#            print(f"Step: {step}, Validation Loss: {val_loss}, Validation Price Error (Normalized): {val_price_error}")
+            print(f"Step: {step}, Validation Loss: {val_loss}")
 
             # Save the best model based on validation loss
             if val_loss < best_val_loss:

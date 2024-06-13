@@ -112,6 +112,15 @@ def run(raw_data):
 
     json_data = json.loads(raw_data)
 
+    print("1111111111111")
+
+    if "input_data" in json_data:
+        print("GPT2 API input detected")
+        data_str = json_data["input_data"]["input_string"][0]
+        print("GPT2 data_str: ", data_str)
+        json_data = json.loads(data_str)
+        print("GPT2 now raw_data:", json_data)
+
 
 
     conv = conv_templates[args.conv_mode].copy()
@@ -177,9 +186,10 @@ def run(raw_data):
     outputs = tokenizer.decode(output_ids[0]).strip()
     conv.messages[-1][-1] = outputs
 
-    if args.debug:
-        print("\n", {"prompt": prompt, "outputs": outputs}, "\n")
-    return [outputs]
+    #if args.debug:
+    print("\n", {"prompt": prompt, "outputs": outputs}, "\n")
+    
+    return [{"0" : outputs}]
     #return result.tolist()
 
 # if __name__ == "__main__":

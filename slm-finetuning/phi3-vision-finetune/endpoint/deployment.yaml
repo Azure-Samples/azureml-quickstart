@@ -1,0 +1,12 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: blue
+endpoint_name: finetunedPhi3EndpointFin
+model: azureml:phi3_finetuned_financial:1
+code_configuration:
+  code: .
+  scoring_script: score.py
+environment: azureml:llava_finetuning_inference:2
+instance_type: Standard_NC12s_v3
+instance_count: 1
+request_settings:
+  request_timeout_ms: 180000

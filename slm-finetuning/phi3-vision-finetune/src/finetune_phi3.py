@@ -26,6 +26,54 @@ torch.manual_seed(3)
 run = wandb.init(project="", entity="")
 
 
+class ScreenCaptureDataset(Dataset):
+    def __init__(self, dataframe, tokenizer, max_length, image_size, image_dir):
+        self.dataframe = dataframe
+        self.tokenizer = tokenizer
+        self.tokenizer.padding_side = 'left'  # Set padding side to left
+        self.max_length = max_length
+        self.image_dir = image_dir
+        
+    def __len__(self):
+        return len(self.dataframe)
+
+    def __getitem__(self, idx):
+        # Get the row at the given index
+        row = self.dataframe.iloc[idx]
+        print("ROW::::", row)
+        
+        # Create the text input for the model
+        text = f"<|user|>\n<|image_1|>What should be the next git command?<|end|><|assistant|>\{row[1]}<|end|>"
+
+
+        image_file = row[0]
+        
+        # Get the image path from the row
+        image_path = f"{self.image_dir}/images/{image_file}.png"
+
+        
+        # Tokenize the text input
+        encodings = self.tokenizer(text, truncation=True, padding='max_length', max_length=self.max_length)
+        
+        try:
+            # Load and transform the image
+            image = Image.open(image_path).convert("RGB")
+            image = self.image_transform_function(image)
+        except (FileNotFoundError, IOError):
+            # Skip the sample if the image is not found
+            return None
+        
+        # Add the image and price information to the encodings dictionary
+        encodings['pixel_values'] = image
+        #encodings['price'] = row['full_price']
+        
+        return {key: torch.tensor(val) for key, val in encodings.items()}
+
+    def image_transform_function(self, image):
+        # Convert the image to a numpy array
+        image = np.array(image)
+        return image
+
 # Custom Dataset class for Burberry Product Prices and Images
 class SujetProductDataset(Dataset):
     def __init__(self, dataframe, tokenizer, max_length, image_size, image_dir):
@@ -133,30 +181,48 @@ tokenizer = processor.tokenizer
 #dataset_path = './data/burberry_dataset/burberry_dataset.csv'
 data_dir = sys.argv[1]
 #dataset_path = f"{data_dir}/burberry_dataset/burberry_dataset.csv"
-dataset_path = f"{data_dir}/sujet_dataset.csv"
+#dataset_path = f"{data_dir}/sujet_dataset.csv"
+dataset_path = f"{data_dir}/keylog.txt"
 print("Dataset:", dataset_path)
 output_path = sys.argv[2]
-df = pd.read_csv(dataset_path)
+df = pd.read_csv(dataset_path, sep="\t", header=None, index_col=False)
+#df = pd.read_csv(dataset_path)
+
+
+if False:
+
+    # Split dataset into training and validation sets
+    train_size = int(0.9 * len(df))
+    val_size = len(df) - train_size
+    train_indices, val_indices = random_split(range(len(df)), [train_size, val_size])
+    train_indices = train_indices.indices
+    val_indices = val_indices.indices
+    train_df = df.iloc[train_indices]
+    val_df = df.iloc[val_indices]
+
+train_df = df
+val_df = df
+
+print("Train_df", train_df)
+
+row = train_df.iloc[0]
+print("DF Row: ", row)
+
+print("val Row: ", row[0])
 
 
 
-# Split dataset into training and validation sets
-train_size = int(0.9 * len(df))
-val_size = len(df) - train_size
-train_indices, val_indices = random_split(range(len(df)), [train_size, val_size])
-train_indices = train_indices.indices
-val_indices = val_indices.indices
-train_df = df.iloc[train_indices]
-val_df = df.iloc[val_indices]
 
 # Create dataset and dataloader for training set
 #train_dataset = BurberryProductDataset(train_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
-train_dataset = SujetProductDataset(train_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
+#train_dataset = SujetProductDataset(train_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
+train_dataset = ScreenCaptureDataset(train_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 
 # Create dataset and dataloader for validation set
 #val_dataset = BurberryProductDataset(val_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
-val_dataset = SujetProductDataset(val_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
+#val_dataset = SujetProductDataset(val_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
+val_dataset = ScreenCaptureDataset(val_df, tokenizer, max_length=512, image_size=128, image_dir=data_dir)
 val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
 
 # Initialize the pre-trained model
@@ -171,7 +237,8 @@ optimizer = optim.AdamW(model.parameters(), lr=5e-5)
 
 # Training loop
 num_epochs = 1
-eval_interval = 150  # Evaluate every 'eval_interval' steps
+#eval_interval = 150  # Evaluate every 'eval_interval' steps
+eval_interval = 2
 loss_scaling_factor = 1000.0  # Variable to scale the loss by a certain amount
 save_dir = f'./saved_models'
 step = 0
@@ -185,7 +252,7 @@ best_val_loss = float('inf')
 best_model_path = None
 
 # Select 10 random images from the validation set for logging
-num_log_samples = 10
+num_log_samples = 2
 log_indices = random.sample(range(len(val_dataset)), num_log_samples)
 
 # Function to extract the predicted price from model predictions

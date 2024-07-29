@@ -102,8 +102,10 @@ def run(raw_data = {
             
    
     # Load image
-    image = Image.open(requests.get(image_url, stream=True).raw)
-    ext = Path(image_url).suffix
+    # image = Image.open(requests.get(image_url, stream=True).raw)
+    # ext = Path(image_url).suffix
+
+    image = load_image(image_url)
 
 
     # Convert image to data URL

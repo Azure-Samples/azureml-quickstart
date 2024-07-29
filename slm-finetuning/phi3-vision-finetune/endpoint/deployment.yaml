@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: blue
 endpoint_name: finetunedPhi3EndpointFin
-model: azureml:phi3_finetuned_financial:1
+model: azureml:phi3_finetuned_git_screen@latest
 code_configuration:
   code: .
   scoring_script: score.py

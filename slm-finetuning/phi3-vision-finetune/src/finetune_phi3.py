@@ -40,10 +40,10 @@ class ScreenCaptureDataset(Dataset):
     def __getitem__(self, idx):
         # Get the row at the given index
         row = self.dataframe.iloc[idx]
-        print("ROW::::", row)
+        #print("ROW::::", row)
         
         # Create the text input for the model
-        text = f"<|user|>\n<|image_1|>What should be the next git command?<|end|><|assistant|>\{row[1]}<|end|>"
+        text = f"<|user|>\n<|image_1|>You are an automation agent that controls keyboard and mouse on a computer screen.  What should be the next keyboard or mouse action?<|end|><|assistant|>\{row[1]}<|end|>"
 
 
         image_file = row[0]
@@ -189,19 +189,19 @@ df = pd.read_csv(dataset_path, sep="\t", header=None, index_col=False)
 #df = pd.read_csv(dataset_path)
 
 
-if False:
+#if False:
 
-    # Split dataset into training and validation sets
-    train_size = int(0.9 * len(df))
-    val_size = len(df) - train_size
-    train_indices, val_indices = random_split(range(len(df)), [train_size, val_size])
-    train_indices = train_indices.indices
-    val_indices = val_indices.indices
-    train_df = df.iloc[train_indices]
-    val_df = df.iloc[val_indices]
+# Split dataset into training and validation sets
+train_size = int(0.9 * len(df))
+val_size = len(df) - train_size
+train_indices, val_indices = random_split(range(len(df)), [train_size, val_size])
+train_indices = train_indices.indices
+val_indices = val_indices.indices
+train_df = df.iloc[train_indices]
+val_df = df.iloc[val_indices]
 
-train_df = df
-val_df = df
+#train_df = df
+#val_df = df
 
 print("Train_df", train_df)
 
@@ -236,9 +236,9 @@ model.to(device)
 optimizer = optim.AdamW(model.parameters(), lr=5e-5)
 
 # Training loop
-num_epochs = 1
+num_epochs = 50
 #eval_interval = 150  # Evaluate every 'eval_interval' steps
-eval_interval = 2
+eval_interval = 75
 loss_scaling_factor = 1000.0  # Variable to scale the loss by a certain amount
 save_dir = f'./saved_models'
 step = 0

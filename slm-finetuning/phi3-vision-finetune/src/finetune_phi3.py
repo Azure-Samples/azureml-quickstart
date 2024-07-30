@@ -42,8 +42,10 @@ class ScreenCaptureDataset(Dataset):
         row = self.dataframe.iloc[idx]
         #print("ROW::::", row)
         
+        content = f"{row[1]}".strip()
+
         # Create the text input for the model
-        text = f"<|user|>\n<|image_1|>You are an automation agent that controls keyboard and mouse on a computer screen.  What should be the next keyboard or mouse action?<|end|><|assistant|>\{row[1]}<|end|>"
+        text = f"<|user|>\n<|image_1|>You are an automation agent that controls keyboard and mouse on a computer screen.  What should be the next keyboard or mouse action?<|end|><|assistant|>\{content}<|end|>"
 
 
         image_file = row[0]

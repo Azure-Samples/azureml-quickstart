@@ -236,7 +236,7 @@ model.to(device)
 optimizer = optim.AdamW(model.parameters(), lr=5e-5)
 
 # Training loop
-num_epochs = 50
+num_epochs = 10
 #eval_interval = 150  # Evaluate every 'eval_interval' steps
 eval_interval = 75
 loss_scaling_factor = 1000.0  # Variable to scale the loss by a certain amount

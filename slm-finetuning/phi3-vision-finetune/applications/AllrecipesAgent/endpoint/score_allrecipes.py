@@ -87,7 +87,7 @@ def process_actions_string(
     prompt_string = input_string.split("[")[0]
     
     print("----------------------------------")
-    print("INPUT_STRING: ", input_string[:10000])
+    print(f"INPUT_STRING: {input_string[:500]}")
     print("----------------------------------")
 
     delim_idx = input_string.index("[")
@@ -110,9 +110,9 @@ def process_actions_string(
 
             images.append(image)
 
-            actions_json[i] = "_".join([action.split("[")[0], action_updater(image, img_cnt, actions_image_url)])
+            actions_json[i] = "".join(["<image>", action_updater(image, img_cnt, actions_image_url)])
 
-    actions_string = " ".join(actions_json)
+    actions_string = json.dumps(actions_json)
 
     return f"<|user|>\n{prompt_string} {actions_string}<|end|><|assistant|>\n", images
 

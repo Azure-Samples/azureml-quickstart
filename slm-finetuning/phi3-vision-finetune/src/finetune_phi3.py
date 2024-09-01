@@ -174,7 +174,8 @@ class BurberryProductDataset(Dataset):
 
 
 # Initialize processor and tokenizer for the pre-trained model
-model_id = "microsoft/Phi-3-vision-128k-instruct"
+#model_id = "microsoft/Phi-3-vision-128k-instruct"
+model_id = "microsoft/Phi-3.5-vision-instruct"
 processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
 tokenizer = processor.tokenizer
 
@@ -228,7 +229,11 @@ val_dataset = ScreenCaptureDataset(val_df, tokenizer, max_length=512, image_size
 val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
 
 # Initialize the pre-trained model
-model = AutoModelForCausalLM.from_pretrained(model_id, device_map="cuda", trust_remote_code=True, torch_dtype="auto")
+model = AutoModelForCausalLM.from_pretrained(model_id, 
+                                             device_map="cuda", 
+                                             trust_remote_code=True, 
+                                             torch_dtype="auto",
+                                             _attn_implementation='flash_attention_2' )
 
 # Set the device to GPU if available, otherwise use CPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

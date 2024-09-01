@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: blue
-endpoint_name: finetunedPhi3EndpointFin
+endpoint_name: finetunedPhi3Endpoint
 model: azureml:phi3_finetuned_git_screen@latest
 code_configuration:
   code: .

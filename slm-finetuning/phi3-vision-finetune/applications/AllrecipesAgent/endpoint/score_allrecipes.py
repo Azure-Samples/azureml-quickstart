@@ -102,7 +102,7 @@ def process_actions_string(
     for i in range(len(actions_json)):
         action = actions_json[i]
 
-        if action.startswith("<image>"):
+        if action.startswith("<image>screenshot_"):
             img_cnt += 1
             actions_image_url = action[action.index('>')+1: ]
             

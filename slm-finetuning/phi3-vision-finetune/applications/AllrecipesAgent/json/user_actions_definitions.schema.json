@@ -1,0 +1,119 @@
+{
+    "$id": "http://microsoft.com/cobra_commander/user_actions_definition.schema.json",
+    "$schema": "http://microsoft.com/cobra_commander/schema",
+    "definitions": {
+        "SleepActionSchema" : {
+            "type" : "object",
+            "description" : "User sleeps for specified number of seconds.",
+            "properties" : {
+                "type" : {
+                    "type" : "string",
+                    "enum" : ["sleep"]
+                },
+                "seconds" : {"type" : "number", "description" : "Number of seconds to sleep"}
+            },
+            "additionalProperties": false,
+            "required": [
+                "type",
+                "seconds"
+            ]
+        },
+        "MouseActionSchema" : {
+            "type" : "object",
+            "description" : "User click a mouse at the specified x and y coordinates of the screen.",
+            "properties" : {
+                "type" : {
+                    "type" : "string",
+                    "enum" : ["mouse"]
+                },
+                "x" : {"type" : "number", "description" : "X-coordinate for mouse click"},
+                "y" : {"type" : "number", "description" : "Y-coordinate for mouse click"}
+            },
+            "additionalProperties": false
+        },
+        "KeyActionSchema" : {
+            "type" : "object",
+            "description" : "User presses a key on the keyboard",
+            "properties" : {
+                "type" : {
+                    "type" : "string",
+                    "enum" : ["key"]
+                },
+                "name" : {"type" : "string", "description" : "name of the keyboard key"}
+            },
+            "additionalProperties": false
+        },
+        "TextActionSchema" : {
+            "type" : "object",
+            "description" : "User inputs text",
+            "properties" : {
+                "type" : {
+                    "type" : "string",
+                    "enum" : ["text"]
+                },
+                "text" : {"type" : "string", "description" : "User text"}
+            },
+            "additionalProperties": false
+        },
+        "ImageActionSchema" : {
+            "type" : "object",
+            "description" : "Screenshot after user action",
+            "properties" : {
+                "type" : {
+                    "type" : "string",
+                    "enum" : ["image"]
+                },
+                "path" : {"type" : "string", "description" : "Path to the image data"}
+            },
+            "additionalProperties": false
+        }
+
+    },
+
+    "additionalProperties": false,
+    "required" : ["action_context", "actions"],
+    "properties" : {
+        "action_context" : {
+            "type" : "object",
+            "properties" : {
+                "screen_height" : {
+                    "type" : "integer"
+                },
+                "screen_width" : {
+                    "type" : "integer"
+                }
+            }
+        },
+        "actions": {
+            "title": "actions",
+            "type": "array",
+            "items" : {
+                "anyOf" : [
+                        {
+                            "type": "object",
+                            "$ref": "#/definitions/SleepActionSchema"
+                        },
+                        {
+                            "type": "object",
+                            "$ref": "#/definitions/MouseActionSchema"
+                        },
+                        {
+                            "type": "object",
+                            "$ref": "#/definitions/KeyActionSchema"
+                        },
+                        {
+                            "type": "object",
+                            "$ref": "#/definitions/TextActionSchema"
+                        },
+                        {
+                            "type": "object",
+                            "$ref": "#/definitions/ImageActionSchema"
+                        }
+                    ]
+            }
+        }
+    }
+}
+    
+
+           

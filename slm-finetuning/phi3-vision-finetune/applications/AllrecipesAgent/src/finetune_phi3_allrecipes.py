@@ -11,7 +11,6 @@ from torchvision import transforms
 from PIL import Image
 import pandas as pd
 import random
-import wandb
 import numpy as np
 from torchvision.transforms.functional import resize, to_pil_image
 import json
@@ -21,11 +20,6 @@ import torch.optim as optim
 import torch.nn.functional as F
 
 torch.manual_seed(3)
-
-
-# Initialize Weights & Biases for experiment tracking
-run = wandb.init(project="", entity="")
-
 
 class AllrecipesCaptureDataset(Dataset):
     def __init__(self, dataframe, tokenizer, max_length, image_size, image_dir):
@@ -81,12 +75,12 @@ class AllrecipesCaptureDataset(Dataset):
                 
                 #encodings['price'] = row['full_price']
         
-        training_prompt_data_str = " ".join(training_prompt_data)
+        training_prompt_data_str = json.dumps(training_prompt_data)
         content = f"{row[1]}".strip()
 
         # Create the text input for the model
         #text = f"<|user|>\n<|image_1|>You are an automation agent that controls keyboard and mouse on a computer screen.  What should be the next keyboard or mouse action?<|end|><|assistant|>\{content}<|end|>"
-        text = f"<|user|>{training_prompt_prefix}\n{training_prompt_data_str}<|end|><|assistant|>\{content}<|end|>"
+        text = f"<|user|>{training_prompt_prefix}\n{training_prompt_data_str}<|end|><|assistant|>{content}<|end|>"
 
         # Tokenize the text input
         encodings = self.tokenizer(text, truncation=True, padding='max_length', max_length=self.max_length)

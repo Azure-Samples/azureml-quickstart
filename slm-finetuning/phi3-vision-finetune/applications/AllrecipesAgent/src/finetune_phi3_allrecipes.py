@@ -18,8 +18,25 @@ import json
 
 import torch.optim as optim
 import torch.nn.functional as F
+import random as rand
 
 torch.manual_seed(3)
+
+
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader = FileSystemLoader('templates'))
+#template = env.get_template('system_prompt_template.v2.jinja')
+template = env.get_template(sys.argv[3])
+
+JSoA = open("./json/user_actions_definitions.schema.json").read()
+
+def render_template(recipe, JSoA, JAoA):
+    output = template.render(website = "AllRecipes.com",
+                            recipe=recipe,
+                            JSoA = JSoA,
+                            JAoA = JAoA
+                            )
+    return output
 
 class AllrecipesCaptureDataset(Dataset):
     def __init__(self, dataframe, tokenizer, max_length, image_size, image_dir):
@@ -33,17 +50,13 @@ class AllrecipesCaptureDataset(Dataset):
         return len(self.dataframe)
 
     def __getitem__(self, idx):
-        # Get the row at the given index
-        row = self.dataframe.iloc[idx]
-        #print("ROW::::", row)
 
-        training_prompt = row[0]
-        training_prompt_parts = training_prompt.split("[")
-        training_prompt_prefix = training_prompt_parts[0]
-        json_data = "["+training_prompt_parts[1]
-        json_data = json_data.replace("'", "\"")
-        #print(f"Json_data: {json_data}")
-        training_prompt_data = json.loads(json_data)
+        row = self.dataframe.iloc[idx]
+
+        target_name = row[0]
+        training_data = row[1]
+
+        training_prompt_data = json.loads(training_data)
 
         pixel_values_array = []
 
@@ -51,11 +64,11 @@ class AllrecipesCaptureDataset(Dataset):
         for i in range(len(training_prompt_data)):
             data = training_prompt_data[i]
 
-            if data.startswith("<image>"):
+            if data["type"] == "image":
                 img_cnt += 1
-                training_prompt_data[i] = f"<|image_{img_cnt}|>"
-
-                image_file = data.split(">")[1]
+                
+                image_file = data["path"]
+                training_prompt_data[i]["path"] = f"<|image_{img_cnt}|>"
                 
                 # Get the image path from the row
                 image_path = f"{self.image_dir}/images/{image_file}.png"
@@ -70,17 +83,15 @@ class AllrecipesCaptureDataset(Dataset):
                 except (FileNotFoundError, IOError):
                     # Skip the sample if the image is not found
                     return None
-                
-                # Add the image and price information to the encodings dictionary
-                
-                #encodings['price'] = row['full_price']
-        
-        training_prompt_data_str = json.dumps(training_prompt_data)
-        content = f"{row[1]}".strip()
 
-        # Create the text input for the model
-        #text = f"<|user|>\n<|image_1|>You are an automation agent that controls keyboard and mouse on a computer screen.  What should be the next keyboard or mouse action?<|end|><|assistant|>\{content}<|end|>"
-        text = f"<|user|>{training_prompt_prefix}\n{training_prompt_data_str}<|end|><|assistant|>{content}<|end|>"
+        random_split = rand.randint(1, len(training_prompt_data)-1)
+        
+        training_input = json.dumps(training_prompt_data[:-random_split])
+        training_output = json.dumps(training_prompt_data[random_split:])
+
+        training_prompt = render_template(target_name, JSoA=JSoA, JAoA=training_input)
+
+        text = f"<|user|>{training_prompt}<|end|><|assistant|>{training_output}<|end|>"
 
         # Tokenize the text input
         encodings = self.tokenizer(text, truncation=True, padding='max_length', max_length=self.max_length)
@@ -102,11 +113,10 @@ tokenizer = processor.tokenizer
 
 
 # Load dataset from disk
-#dataset_path = './data/burberry_dataset/burberry_dataset.csv'
 data_dir = sys.argv[1]
-#dataset_path = f"{data_dir}/burberry_dataset/burberry_dataset.csv"
-#dataset_path = f"{data_dir}/sujet_dataset.csv"
-dataset_path = f"{data_dir}/keylog_aug.txt"
+
+#dataset_path = f"{data_dir}/keylog_aug.txt"
+dataset_path = f"{data_dir}/{sys.argv[4]}"
 print("Dataset:", dataset_path)
 output_path = sys.argv[2]
 df = pd.read_csv(dataset_path, sep="\t", header=None, index_col=False)
@@ -164,9 +174,9 @@ model.to(device)
 optimizer = optim.AdamW(model.parameters(), lr=5e-5)
 
 # Training loop
-num_epochs = 10
+num_epochs = 5
 #eval_interval = 150  # Evaluate every 'eval_interval' steps
-eval_interval = 75
+eval_interval = 50
 loss_scaling_factor = 1000.0  # Variable to scale the loss by a certain amount
 save_dir = f'./saved_models'
 step = 0
@@ -299,14 +309,14 @@ for epoch in range(num_epochs):
         batch_count += 1
 
         # Log batch loss to Weights & Biases
-        wandb.log({"Batch Loss": total_loss.item(), "Step": step})
+        print({"Batch Loss": total_loss.item(), "Step": step})
 
         print(f"Epoch: {epoch}, Step: {step}, Batch Loss: {total_loss.item()}")
 
         if step % eval_interval == 0:
             #val_loss, val_price_error = evaluate(model, val_loader, device, tokenizer=tokenizer, log_indices=log_indices, step=step )
             val_loss = evaluate(model, val_loader, device, tokenizer=tokenizer, log_indices=log_indices, step=step )
-            wandb.log({
+            print({
                 "Validation Loss": val_loss,
 #                "Validation Price Error (Average)": val_price_error,
                 "Step": step
@@ -323,14 +333,14 @@ for epoch in range(num_epochs):
 
             avg_train_loss = total_train_loss / batch_count
             #avg_train_price_error = total_train_price_error / batch_count
-            wandb.log({
+            print({
                 "Epoch": epoch,
                 "Average Training Loss": avg_train_loss,
                 #"Average Training Price Error": avg_train_price_error
             })
             
     #print(f"Epoch: {epoch}, Average Training Loss: {avg_train_loss}, Average Training Price Error: {avg_train_price_error}")
-    print(f"Epoch: {epoch}, Average Training Loss: {avg_train_loss}")
+    #print(f"Epoch: {epoch}, Average Training Loss: {avg_train_loss}")
 
 
     print("Best Model Path: ", best_model_path)
@@ -343,4 +353,4 @@ for epoch in range(num_epochs):
         # )
 
 # Finish the Weights & Biases run
-wandb.finish()
+#wandb.finish()

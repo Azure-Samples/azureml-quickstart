@@ -18,8 +18,10 @@ def load_image(image_file):
         response = requests.get(image_file)
         image = Image.open(BytesIO(response.content)).convert('RGB')
     elif image_file.startswith(img_base64_pref):
+        print("base64 image detected")
         img_data = image_file[len(img_base64_pref):]
-        print("Image data:", img_data)
+        print("Loaded image data")
+        #print("Image data:", img_data)
         msg = base64.b64decode(img_data)
         buf = BytesIO(msg)
         image = Image.open(buf).convert('RGB')
@@ -34,9 +36,6 @@ EXT_TO_MIMETYPE = {
     '.png': 'image/png',
     '.svg': 'image/svg+xml'
 }
-
-
-
 
 
 def image_to_data_url(image: Image.Image, ext: str) -> str:
@@ -65,86 +64,56 @@ def init():
 
     model = AutoModelForCausalLM.from_pretrained(
         model_id, 
-        torch_dtype=torch.float16, 
+        torch_dtype=torch.float16,
         attn_implementation="eager",
         trust_remote_code=True
     )
-
 
     model.to(device)
 
     processor = AutoProcessor.from_pretrained(base_model_id, trust_remote_code=True) 
 
-#{"input_data": {"input_string": ["what do you see?"]}, "parameters": {"top_p": 1.0, "temperature": 1.0, "max_new_tokens": 500}}
 
-def process_actions_string(
-        input_string = "You are a useful AI that searches AllRecipes.com website for various recipies.  The following json document contains a set of keyboard and mouth actions together with the screenshots that preempted them to search for 'italian wedding soup' recipe on the website.  Suggest the nest set of keyboard and mouth actions to continue searching for the recipe. ['<sleep>11.645689', '<image>screenshot_2024-08-31_11-24-34.961750', '<mouse>on_click(1070,182,Button.left,True)', '<sleep>3.881456', '<image>screenshot_2024-08-31_11-24-40.230237', 'italian', '<key>Key.space:True', 'wedding', '<key>Key.space:True']	['soup', '<sleep>1.752508']",
-        image_loader = None,
-        action_updater = lambda image, img_cnt, actions_image_url: f"<|image_{img_cnt}|>"
-):
-
-    input_string = input_string.split("\t")[0]
-    prompt_string = input_string.split("[")[0]
-    
-    print("----------------------------------")
-    print(f"INPUT_STRING: {input_string[:500]}")
-    print("----------------------------------")
-
-    delim_idx = input_string.index("[")
-
-    actions_json = input_string[delim_idx:].replace("'", "\"")
-    actions_json = json.loads(actions_json)
-    #print(actions_json)
-
-
-    images = []
-    img_cnt = 0
-    for i in range(len(actions_json)):
-        action = actions_json[i]
-
-        if action.startswith("<image>screenshot_"):
-            img_cnt += 1
-            actions_image_url = action[action.index('>')+1: ]
-            
-            image = image_loader(actions_image_url)
-
-            images.append(image)
-
-            actions_json[i] = "".join(["<image>", action_updater(image, img_cnt, actions_image_url)])
-
-    actions_string = json.dumps(actions_json)
-
-    return f"<|user|>\n{prompt_string} {actions_string}<|end|><|assistant|>\n", images
-
-def run(raw_data = {
-        "prompt" : "<|user|>\n<|image_1|>What is shown in this image?<|end|><|assistant|>\n",
-        "image_url" : "https://th.bing.com/th/id/OIP.dep14_-r-TaqPFIrmI4HBAHaHa?rs=1&pid=ImgDetMain"
-    }):
+def run(raw_data):
 
     print("===============================")
-    print(raw_data[:100])
+    #print(f"{raw_data}"[:100])
     print("===============================")
 
     raw_data = json.loads(raw_data)
 
-    if "input_data" in raw_data:
-        data_str = raw_data["input_data"]["input_string"][0]
-        #print("--data_str: ", data_str)
-        
+    input_string = raw_data["input_data"]["input_string"][0]
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Loaded input_string:", input_string[:1000])
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+    data_js = json.loads(input_string)
+    print("Loaded data_js:")
     
-    image_prompt, images = process_actions_string(input_string = data_str, image_loader = load_image)
+    data_prompt = data_js["prompt"]
+    data_images = data_js["images"]
+
+    print("Prompt:", data_prompt)
+    print("Images Len: ", len(data_images))
+
+    images = []
+
+    for data_image in data_images:
+        image = load_image(data_image)
+        images.append(image)
+
+    prompt = f"<|user|>\n{data_prompt}<|end|><|assistant|>\n"
     
-    inputs = processor(image_prompt, images, return_tensors="pt").to(device)
+    inputs = processor(prompt, images, return_tensors="pt").to(device)
     generation_args = { 
         "max_new_tokens": 500, 
         "temperature": 0.0, 
         "do_sample": False, 
     } 
 
-
     generate_ids = model.generate(**inputs, eos_token_id=processor.tokenizer.eos_token_id, **generation_args) 
 
-    # Remove input tokens 
+    # # Remove input tokens 
     generate_ids = generate_ids[:, inputs['input_ids'].shape[1]:]
     response_text = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0] 
 
@@ -152,9 +121,11 @@ def run(raw_data = {
     
 
     output = [{"0" : response_text}]
-    print("Output:", output)
+    #print("Output:", output)
+    print("Output received")
 
     return output
+    # return [{"0" : test_response}]
     # return {
     #     "predicted_text": response_text,
     #     "image_data_url": data_url

@@ -1,0 +1,23 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: src
+command: >-
+  ./pull_dataset_from_huggingface.sh ${{inputs.huggingface_dataset_name}} ${{outputs.output_dir_path}}
+inputs:
+  huggingface_dataset_name: molssiai-hub/pubchemqc-b3lyp
+outputs:
+  output_dir_path:
+    mode: rw_mount
+    type: uri_folder
+environment: 
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
+compute: azureml:Standard-D48ads-v5
+services:
+  my_vs_code:
+    type: vs_code
+    nodes: all # For distributed jobs, use the `nodes` property to pick which node you want to enable interactive services on. If `nodes` are not selected, by default, interactive applications are only enabled on the head node. Values are "all", or compute node index (for ex. "0", "1" etc.)
+  my_jupyter_lab:
+    type: jupyter_lab
+    nodes: all
+display_name: pull_dataset_from_huggingface
+experiment_name: pull_dataset
+description: Pull dataset from huggingface to Azure Blob

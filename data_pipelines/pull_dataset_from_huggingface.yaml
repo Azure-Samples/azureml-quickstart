@@ -10,7 +10,7 @@ outputs:
     type: uri_folder
 environment: 
   image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:latest
-compute: azureml:Standard-D48ads-v5
+compute: azureml:cpu-cluster
 services:
   my_vs_code:
     type: vs_code
